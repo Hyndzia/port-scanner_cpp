@@ -70,7 +70,8 @@ std::string Scanner::resolveDNS() {
 }
 
 void Scanner::scanUI() {
-    system("clear");
+    system("clear"); //comment out if compiling on windows
+    //system("cls"); //comment out if compiling on linux
     std::cout<<R"(
                        _
    _ __    ___   _ __ | |_   ___   ___  __ _  _ __   _ __    ___  _ __    ___   _      _
