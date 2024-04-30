@@ -33,7 +33,7 @@ bool Scanner::isPortOpen(uint16_t port) {
         socket.close();
 
     } catch(const boost::system::system_error& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
+        throw std::runtime_error(std::string("") + e.what());
     }
 
     return flag;
@@ -42,14 +42,18 @@ bool Scanner::isPortOpen(uint16_t port) {
 void Scanner::scanPorts(){
     std::cout<<"\n  Scanning ports on "<<host<<"("<<ipv4<<")"<<"....\n"<<std::endl;
     auto t1 = std::chrono::high_resolution_clock::now();
-    for (uint32_t port = start; port <= end; port++) {
-        if(isPortOpen(port)) std::cout<<"  Port "<<port<<" open!"<<std::endl;
+    for (uint32_t port = start-1; port <= end; port++) {
+        if(isPortOpen(port)){
+            std::cout<<"  Port "<<port<<" open!"<<std::endl;
+            found++;
+        }
         //else std::cout<<"Port "<<port<<" closed!"<<std::endl;
     }
     auto t2 = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1);
     auto seconds = duration.count()/1000;
-    std::cout<<"\n  Scanning completed in "<<seconds<<" s!\n\n"<<std::endl;
+    std::cout<<"\n  Scanning completed in "<<seconds<<"s!"<<std::endl;
+    std::cout<<"  A total of "<<found<<" ports found!\n\n"<<std::endl;
 }
 
 std::string Scanner::resolveDNS() {
@@ -64,28 +68,40 @@ std::string Scanner::resolveDNS() {
             }
         }
     } catch (const std::exception& e) {
-        std::cerr << "  Exception: " << e.what() << std::endl;
+        throw std::runtime_error(std::string("") + e.what());
     }
     return "";
 }
 
 void Scanner::scanUI() {
-    system("clear");//comment out if compiling on windows
-    //system("cls"); //comment out if compiling on linux
-    std::cout<<R"(
+    try {
+        int tempStart, tempEnd;
+        system("clear");//comment out if compiling on windows
+        //system("cls"); //comment out if compiling on linux
+        std::cout << R"(
                        _
    _ __    ___   _ __ | |_   ___   ___  __ _  _ __   _ __    ___  _ __    ___   _      _
   | '_ \  / _ \ | '__|| __| / __| / __|/ _` || '_ \ | '_ \  / _ \| '__|  / __|_| |_  _| |_
   | |_) || (_) || |   | |_  \__ \| (__| (_| || | | || | | ||  __/| |    | (__|_   _||_   _|
   | .__/  \___/ |_|    \__| |___/ \___|\__,_||_| |_||_| |_| \___||_|     \___| |_|    |_|
   |_|
-    )"<<std::endl;
-    std::cout << "\n\n  Enter hostname: "; //only DNS or ipv4
-    scanf("%s", &host); //cin doesnt work when entering host
-    ipv4 = resolveDNS();
-    std::cout << "  Enter starting port: ";
-    std::cin >> start;
-    std::cout << "  Enter ending port: ";
-    std::cin >> end;
-    scanPorts();
+    )" << std::endl;
+        std::cout << "\n\n  Enter hostname: "; //only DNS or ipv4
+        scanf("%s", &host); //cin doesnt work when entering host
+        ipv4 = resolveDNS();
+        std::cout << "  Enter starting port: ";
+        std::cin >> tempStart;
+        std::cout << "  Enter ending port: ";
+        std::cin >> tempEnd;
+        if (tempStart <= 0 || tempStart > 65535 || tempEnd <= 0 || tempEnd > 65535) {
+            throw std::invalid_argument("Invalid port number. Port numbers must be in the range of 1-65535.");
+        } else{
+            start = static_cast<uint16_t>(tempStart);
+            end = static_cast<uint16_t>(tempEnd);
+        }
+        scanPorts();
+    } catch (const std::exception& e){
+        std::cerr <<"\n  "<< e.what()<<"\n"<<std::endl;
+    }
+
 }

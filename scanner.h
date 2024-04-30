@@ -3,7 +3,8 @@
 
 class Scanner{
 public:
-    Scanner(){};
+    Scanner() : found(0){
+    };
     bool isPortOpen(uint16_t port);
     void scanPorts();
     std::string resolveDNS();
@@ -13,5 +14,6 @@ private:
     std::string ipv4;
     uint16_t start;
     uint16_t end;
+    uint16_t found;
 
 };
