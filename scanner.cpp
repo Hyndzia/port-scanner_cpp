@@ -42,7 +42,7 @@ bool Scanner::isPortOpen(uint16_t port) {
 void Scanner::scanPorts(){
     std::cout<<"\n  Scanning ports on "<<host<<"("<<ipv4<<")"<<"....\n"<<std::endl;
     auto t1 = std::chrono::high_resolution_clock::now();
-    for (uint32_t port = start-1; port <= end; port++) {
+    for (uint16_t port = start-1; port <= end; port++) {
         if(isPortOpen(port)){
             std::cout<<"  Port "<<port<<" open!"<<std::endl;
             found++;
