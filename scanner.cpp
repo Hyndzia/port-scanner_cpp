@@ -25,8 +25,7 @@ bool Scanner::isPortOpen(uint16_t port) {
         timer.async_wait([&](const boost::system::error_code& ec) {
             if (ec == boost::asio::error::operation_aborted) {
             } else if (!flag) {
-
-                socket.cancel();
+                throw std::runtime_error("Destination host unreachable....");
             }
         });
         io_context.run();
@@ -40,11 +39,11 @@ bool Scanner::isPortOpen(uint16_t port) {
 }
 
 void Scanner::scanPorts(){
-    std::cout<<"\n  Scanning ports on "<<host<<"("<<ipv4<<")"<<"....\n"<<std::endl;
+    std::cout<<"\n  Scanning ports on "<<host<<"("<<ipv4<<")"<<"...."<<std::endl;
     auto t1 = std::chrono::high_resolution_clock::now();
     for (uint16_t port = start-1; port <= end; port++) {
         if(isPortOpen(port)){
-            std::cout<<"  Port "<<port<<" open!"<<std::endl;
+            std::cout<<"\n  Port "<<port<<" open!"<<std::endl;
             found++;
         }
         //else std::cout<<"Port "<<port<<" closed!"<<std::endl;
