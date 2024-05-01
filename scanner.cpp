@@ -25,7 +25,7 @@ bool Scanner::isPortOpen(uint16_t port) {
         timer.async_wait([&](const boost::system::error_code& ec) {
             if (ec == boost::asio::error::operation_aborted) {
             } else if (!flag) {
-                throw std::runtime_error("Destination host unreachable....");
+                
             }
         });
         io_context.run();
