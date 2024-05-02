@@ -10,7 +10,8 @@ public:
     std::string resolveDNS();
     void scanUI();
 private:
-    char host[100];
+    //char host[100];
+    std::string host;
     std::string ipv4;
     uint16_t start;
     uint16_t end;

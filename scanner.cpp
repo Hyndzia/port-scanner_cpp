@@ -86,7 +86,8 @@ void Scanner::scanUI() {
   |_|
     )" << std::endl;
         std::cout << "\n\n  Enter hostname: "; //only DNS or ipv4
-        scanf("%s", &host); //cin doesnt work when entering host
+        //scanf("%s", &host); //cin doesnt work when entering host
+	std::cin>>host;
         ipv4 = resolveDNS();
         std::cout << "  Enter starting port: ";
         std::cin >> tempStart;
